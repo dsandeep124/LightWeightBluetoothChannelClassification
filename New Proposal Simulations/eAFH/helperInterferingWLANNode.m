@@ -153,10 +153,10 @@ classdef helperInterferingWLANNode < wirelessnetwork.internal.wirelessNode
             %
             %   CURRENTTIME is the current simulation time in seconds.
 
-            persistent wlanChannelChangeTimer;
-            if isempty(wlanChannelChangeTimer)
-                wlanChannelChangeTimer=obj.WLANChannelUpdateTime; % Change wlan channel every given second
-            end
+            % persistent wlanChannelChangeTimer;
+            % if isempty(wlanChannelChangeTimer)
+            %     wlanChannelChangeTimer=obj.WLANChannelUpdateTime; % Change wlan channel every given second
+            % end
 
             % Initialize the node when the node is run for the first time
             if ~obj.pIsInitialized
@@ -178,6 +178,11 @@ classdef helperInterferingWLANNode < wirelessnetwork.internal.wirelessNode
             if obj.pNextSignalTimer <= 0
                 % Update the transmission buffer with the signal
                 % information
+                channelNumber = randi([1, 8], 1, 1);
+                % sprintf('WLAN Channel changed to %d', channelNumber)
+                obj.CenterFrequency=wlanChannelFrequency(channelNumber, 2.4);
+                obj.pTransmitBuffer.CenterFrequency=obj.CenterFrequency;
+
                 obj.TransmitBuffer = obj.pTransmitBuffer;
                 obj.TransmitBuffer.StartTime = obj.SimulationTime;
 
@@ -189,14 +194,14 @@ classdef helperInterferingWLANNode < wirelessnetwork.internal.wirelessNode
             end
             nextInvokeTime = round(obj.pNextSignalTimer + obj.SimulationTime, 9);
 
-            wlanChannelChangeTimer=wlanChannelChangeTimer-elapsedTime;
-            if wlanChannelChangeTimer<=0
-                channelNumber = randi([1, 8], 1, 1);
-                sprintf('WLAN Channel changed to %d', channelNumber)
-                obj.CenterFrequency=wlanChannelFrequency(channelNumber, 2.4);
-                obj.pTransmitBuffer.CenterFrequency=obj.CenterFrequency;
-                wlanChannelChangeTimer = obj.WLANChannelUpdateTime; % Change wlan channel every given second
-            end
+            % wlanChannelChangeTimer=wlanChannelChangeTimer-elapsedTime;
+            % if wlanChannelChangeTimer<=0
+            %     channelNumber = randi([1, 8], 1, 1);
+            %     sprintf('WLAN Channel changed to %d', channelNumber)
+            %     obj.CenterFrequency=wlanChannelFrequency(channelNumber, 2.4);
+            %     obj.pTransmitBuffer.CenterFrequency=obj.CenterFrequency;
+            %     wlanChannelChangeTimer = obj.WLANChannelUpdateTime; % Change wlan channel every given second
+            % end
         end
 
         function txPackets = pullTransmittedData(obj)
